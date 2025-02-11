@@ -7,7 +7,7 @@
     <script>
         function openCorrectBrowser() {
             var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
-            var encodedUrl = encodeURIComponent(destinationUrl); // Properly encode the URL
+            var encodedUrl = encodeURIComponent(destinationUrl);
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
             // Detect iOS (iPhone/iPad)
@@ -17,16 +17,29 @@
                 return;
             }
 
-            // If NOT iOS, try to open in Chrome
-            var chromeUrl = "googlechrome://player.hololink.app/?url=" + encodeURIComponent("https://hololink.app/ll8ek");
+            // Detect Android and use Intent URI to open Chrome
+            if (/android/i.test(userAgent)) {
+                console.log("Android detected - Attempting Chrome Intent redirect");
+                window.location.href = "intent://player.hololink.app?url=https://hololink.app/ll8ek#Intent;scheme=https;package=com.android.chrome;end;";
+                setTimeout(function() {
+                    console.log("Chrome Intent failed, redirecting normally.");
+                    window.location.href = destinationUrl;
+                }, 1500);
+                return;
+            }
 
-            // Attempt to open in Chrome
+            // For Windows/Mac, try Google Chrome protocol (may not always work)
+            var chromeUrl = "googlechrome://player.hololink.app?url=https://hololink.app/ll8ek";
+
+            // Try to open in Chrome
+            console.log("Attempting Chrome URL Scheme Redirect");
             window.location.href = chromeUrl;
 
-            // Fallback: If Chrome redirect fails, open normally after 1 second
+            // Fallback after 1.5 seconds if Chrome fails
             setTimeout(function() {
+                console.log("Chrome scheme failed, opening normally.");
                 window.location.href = destinationUrl;
-            }, 1000);
+            }, 1500);
         }
 
         window.onload = openCorrectBrowser;
@@ -39,3 +52,4 @@
     </script>
 </body>
 </html>
+
