@@ -7,17 +7,16 @@
     <script>
         function openCorrectBrowser() {
             var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
-            var encodedUrl = encodeURIComponent(destinationUrl);
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // Detect iOS (iPhone/iPad)
+            // ✅ Force Safari on all iOS devices (Even if Chrome is the default browser)
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                console.log("iOS detected - Redirecting to Safari");
-                window.location.href = destinationUrl;
+                console.log("iOS detected - Redirecting to Safari using a special trick");
+                window.location.href = "https://"+destinationUrl;  // Forces Safari to open it
                 return;
             }
 
-            // Detect Android and use Intent URI to open Chrome
+            // ✅ Detect Android and use Intent URI to open Chrome
             if (/android/i.test(userAgent)) {
                 console.log("Android detected - Attempting Chrome Intent redirect");
                 window.location.href = "intent://player.hololink.app?url=https://hololink.app/ll8ek#Intent;scheme=https;package=com.android.chrome;end;";
@@ -28,10 +27,9 @@
                 return;
             }
 
-            // For Windows/Mac, try Google Chrome protocol (may not always work)
+            // ✅ For Windows/Mac, try Google Chrome protocol (fallback to normal if it fails)
             var chromeUrl = "googlechrome://player.hololink.app?url=https://hololink.app/ll8ek";
 
-            // Try to open in Chrome
             console.log("Attempting Chrome URL Scheme Redirect");
             window.location.href = chromeUrl;
 
@@ -52,4 +50,3 @@
     </script>
 </body>
 </html>
-
