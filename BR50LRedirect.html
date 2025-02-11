@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        function openCorrectBrowser() {
+            var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+            var encodedUrl = encodeURIComponent(destinationUrl); // Properly encode the URL
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Detect iOS (iPhone/iPad)
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                console.log("iOS detected - Redirecting to Safari");
+                window.location.href = destinationUrl;
+                return;
+            }
+
+            // If NOT iOS, try to open in Chrome
+            var chromeUrl = "googlechrome://player.hololink.app/?url=" + encodeURIComponent("https://hololink.app/ll8ek");
+
+            // Attempt to open in Chrome
+            window.location.href = chromeUrl;
+
+            // Fallback: If Chrome redirect fails, open normally after 1 second
+            setTimeout(function() {
+                window.location.href = destinationUrl;
+            }, 1000);
+        }
+
+        window.onload = openCorrectBrowser;
+    </script>
+</head>
+<body>
+    <h2>Redirecting... If nothing happens, <a id="manualLink" href="#">click here</a>.</h2>
+    <script>
+        document.getElementById("manualLink").href = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+    </script>
+</body>
+</html>
