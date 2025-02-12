@@ -9,10 +9,10 @@
             var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // ✅ Force Safari on all iOS devices (Even if Chrome is the default browser)
+            // ✅ Force Safari on all iOS devices (Ensure full URL is passed)
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                console.log("iOS detected - Redirecting to Safari using a special trick");
-                window.location.href = "https://"+destinationUrl;  // Forces Safari to open it
+                console.log("iOS detected - Redirecting to Safari");
+                window.location.href = destinationUrl; // Pass the full URL directly
                 return;
             }
 
