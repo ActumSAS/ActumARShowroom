@@ -9,36 +9,45 @@
             var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // ✅ Force Safari on iOS (works even if Chrome is default)
+            // ✅ Force Safari on iOS (always)
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
                 console.log("iOS detected - Forcing Safari");
-                // Create a temporary iframe to open the URL in Safari
-                var iframe = document.createElement('iframe');
-                iframe.style.display = "none";
-                iframe.src = destinationUrl; // Ensures Safari handles the URL
-                document.body.appendChild(iframe);
-                setTimeout(function () {
-                    document.body.removeChild(iframe); // Clean up
-                }, 2000);
+
+                // Create a hidden `mailto:` link to invoke Safari
+                var link = document.createElement("a");
+                link.href = destinationUrl; // Destination URL
+                link.rel = "noreferrer"; // Security enhancement
+                link.style.display = "none"; // Keep it hidden
+                link.setAttribute("target", "_blank"); // Open in Safari
+                document.body.appendChild(link);
+
+                // Simulate a user click to open the URL in Safari
+                link.click();
+
+                // Cleanup after redirection
+                setTimeout(() => document.body.removeChild(link), 1000);
                 return;
             }
 
-            // ✅ Redirect Android to Chrome using Intent URI
+            // ✅ Detect Android and use Intent URI to open Chrome
             if (/android/i.test(userAgent)) {
-                console.log("Android detected - Redirecting to Chrome");
+                console.log("Android detected - Attempting Chrome Intent redirect");
                 window.location.href = "intent://player.hololink.app?url=https://hololink.app/ll8ek#Intent;scheme=https;package=com.android.chrome;end;";
-                setTimeout(function () {
+                setTimeout(function() {
                     console.log("Chrome Intent failed, redirecting normally.");
                     window.location.href = destinationUrl;
                 }, 1500);
                 return;
             }
 
-            // ✅ For Desktop (Windows/Mac), try Chrome or fallback
+            // ✅ For Windows/Mac, try Google Chrome protocol (fallback to normal if it fails)
             var chromeUrl = "googlechrome://player.hololink.app?url=https://hololink.app/ll8ek";
+
             console.log("Attempting Chrome URL Scheme Redirect");
             window.location.href = chromeUrl;
-            setTimeout(function () {
+
+            // Fallback after 1.5 seconds if Chrome fails
+            setTimeout(function() {
                 console.log("Chrome scheme failed, opening normally.");
                 window.location.href = destinationUrl;
             }, 1500);
