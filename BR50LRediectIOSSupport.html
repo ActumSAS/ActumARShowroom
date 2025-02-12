@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        function openInSafari() {
+            var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // ✅ Detect iOS and force Safari
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                console.log("iOS detected - Redirecting to Safari");
+
+                // Force Safari to open using Apple's shortcuts protocol
+                window.location.href = `shortcuts://run-shortcut?name=OpenInSafari&input=${encodeURIComponent(destinationUrl)}`;
+                return;
+            }
+
+            // ✅ Handle other platforms (Android, Desktop)
+            console.log("Non-iOS device detected - Defaulting to normal behavior");
+            window.location.href = destinationUrl;
+        }
+
+        window.onload = openInSafari;
+    </script>
+</head>
+<body>
+    <h2>Redirecting... If nothing happens, <a id="manualLink" href="#">click here</a>.</h2>
+    <script>
+        document.getElementById("manualLink").href = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+    </script>
+</body>
+</html>
