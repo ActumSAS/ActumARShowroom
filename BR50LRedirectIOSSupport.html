@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to Safari...</title>
+    <script>
+        function redirectToSafari() {
+            const destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // ✅ Detect iOS devices (iPad, iPhone, iPod)
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                console.log("iOS detected - Attempting to open in Safari");
+
+                // 1. Force a known Safari redirect scheme
+                const safariUrl = "applewebdata:///" + destinationUrl;
+
+                // 2. Attempt to open Safari explicitly
+                window.location.href = safariUrl;
+
+                // 3. Backup plan (open in Safari with standard link)
+                setTimeout(() => {
+                    const a = document.createElement("a");
+                    a.href = destinationUrl;
+                    a.target = "_blank";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, 500);
+                return;
+            }
+
+            // ✅ For other platforms, just redirect normally
+            console.log("Non-iOS detected - Redirecting to URL");
+            window.location.href = destinationUrl;
+        }
+
+        window.onload = redirectToSafari;
+    </script>
+</head>
+<body>
+    <h2>Redirecting... If nothing happens, <a id="manualLink" href="#">click here</a>.</h2>
+    <script>
+        document.getElementById("manualLink").href = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+    </script>
+</body>
+</html>
