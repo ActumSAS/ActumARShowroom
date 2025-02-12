@@ -9,32 +9,36 @@
             var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // ✅ Force Safari on all iOS devices (Ensure full URL is passed)
+            // ✅ Force Safari on iOS (works even if Chrome is default)
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                console.log("iOS detected - Redirecting to Safari");
-                window.location.href = destinationUrl; // Pass the full URL directly
+                console.log("iOS detected - Forcing Safari");
+                // Create a temporary iframe to open the URL in Safari
+                var iframe = document.createElement('iframe');
+                iframe.style.display = "none";
+                iframe.src = destinationUrl; // Ensures Safari handles the URL
+                document.body.appendChild(iframe);
+                setTimeout(function () {
+                    document.body.removeChild(iframe); // Clean up
+                }, 2000);
                 return;
             }
 
-            // ✅ Detect Android and use Intent URI to open Chrome
+            // ✅ Redirect Android to Chrome using Intent URI
             if (/android/i.test(userAgent)) {
-                console.log("Android detected - Attempting Chrome Intent redirect");
+                console.log("Android detected - Redirecting to Chrome");
                 window.location.href = "intent://player.hololink.app?url=https://hololink.app/ll8ek#Intent;scheme=https;package=com.android.chrome;end;";
-                setTimeout(function() {
+                setTimeout(function () {
                     console.log("Chrome Intent failed, redirecting normally.");
                     window.location.href = destinationUrl;
                 }, 1500);
                 return;
             }
 
-            // ✅ For Windows/Mac, try Google Chrome protocol (fallback to normal if it fails)
+            // ✅ For Desktop (Windows/Mac), try Chrome or fallback
             var chromeUrl = "googlechrome://player.hololink.app?url=https://hololink.app/ll8ek";
-
             console.log("Attempting Chrome URL Scheme Redirect");
             window.location.href = chromeUrl;
-
-            // Fallback after 1.5 seconds if Chrome fails
-            setTimeout(function() {
+            setTimeout(function () {
                 console.log("Chrome scheme failed, opening normally.");
                 window.location.href = destinationUrl;
             }, 1500);
