@@ -3,40 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting to Safari...</title>
+    <title>Redirecting...</title>
     <script>
-        function redirectToSafari() {
-            const destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        function openCorrectBrowser() {
+            var destinationUrl = "https://player.hololink.app?url=https://hololink.app/ll8ek";
+            var encodedUrl = encodeURIComponent(destinationUrl);
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // ✅ Detect iOS devices (iPad, iPhone, iPod)
+            // Detect iOS (iPhone/iPad)
             if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                console.log("iOS detected - Attempting to open in Safari");
-
-                // 1. Force a known Safari redirect scheme
-                const safariUrl = "applewebdata:///" + destinationUrl;
-
-                // 2. Attempt to open Safari explicitly
-                window.location.href = safariUrl;
-
-                // 3. Backup plan (open in Safari with standard link)
-                setTimeout(() => {
-                    const a = document.createElement("a");
-                    a.href = destinationUrl;
-                    a.target = "_blank";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }, 500);
+                console.log("iOS detected - Redirecting to Safari");
+                window.location.href = "safari://player.hololink.app?url=https://hololink.app/ll8ek";
                 return;
             }
 
-            // ✅ For other platforms, just redirect normally
-            console.log("Non-iOS detected - Redirecting to URL");
-            window.location.href = destinationUrl;
+            // Detect Android and use Intent URI to open Chrome
+            if (/android/i.test(userAgent)) {
+                console.log("Android detected - Attempting Chrome Intent redirect");
+                window.location.href = "intent://player.hololink.app?url=https://hololink.app/ll8ek#Intent;scheme=https;package=com.android.chrome;end;";
+                setTimeout(function() {
+                    console.log("Chrome Intent failed, redirecting normally.");
+                    window.location.href = destinationUrl;
+                }, 1500);
+                return;
+            }
+
+            // For Windows/Mac, try Google Chrome protocol (may not always work)
+            var chromeUrl = "googlechrome://player.hololink.app?url=https://hololink.app/ll8ek";
+
+            // Try to open in Chrome
+            console.log("Attempting Chrome URL Scheme Redirect");
+            window.location.href = chromeUrl;
+
+            // Fallback after 1.5 seconds if Chrome fails
+            setTimeout(function() {
+                console.log("Chrome scheme failed, opening normally.");
+                window.location.href = destinationUrl;
+            }, 1500);
         }
 
-        window.onload = redirectToSafari;
+        window.onload = openCorrectBrowser;
     </script>
 </head>
 <body>
