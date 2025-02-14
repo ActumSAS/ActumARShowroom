@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        function openCorrectBrowser() {
+            var destinationUrl = "https://player.hololink.app?url=https://hololink.app/6lkpk";
+            var encodedUrl = encodeURIComponent(destinationUrl);
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Detect iOS (iPhone/iPad)
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                console.log("iOS detected - Redirecting to Safari");
+                window.location.href = destinationUrl;
+                return;
+            }
+
+            // Detect Android and use Intent URI to open Chrome
+            if (/android/i.test(userAgent)) {
+                console.log("Android detected - Attempting Chrome Intent redirect");
+                window.location.href = "intent://player.hololink.app?url=https://hololink.app/6lkpk#Intent;scheme=https;package=com.android.chrome;end;";
+                setTimeout(function() {
+                    console.log("Chrome Intent failed, redirecting normally.");
+                    window.location.href = destinationUrl;
+                }, 1500);
+                return;
+            }
+
+            // For Windows/Mac, try Google Chrome protocol (may not always work)
+            var chromeUrl = "googlechrome://player.hololink.app?url=https://hololink.app/6lkpk";
+
+            // Try to open in Chrome
+            console.log("Attempting Chrome URL Scheme Redirect");
+            window.location.href = chromeUrl;
+
+            // Fallback after 1.5 seconds if Chrome fails
+            setTimeout(function() {
+                console.log("Chrome scheme failed, opening normally.");
+                window.location.href = destinationUrl;
+            }, 1500);
+        }
+
+        window.onload = openCorrectBrowser;
+    </script>
+</head>
+<body>
+    <h2>Redirecting... If nothing happens, <a id="manualLink" href="#">click here</a>.</h2>
+    <script>
+        document.getElementById("manualLink").href = "https://player.hololink.app?url=https://hololink.app/6lkpk";
+    </script>
+</body>
+</html>
